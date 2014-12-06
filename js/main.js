@@ -27,3 +27,24 @@ var circ = new Kinetic.Circle({
 layer.add(rect);
 layer.add(circ);
 stage.add(layer);
+
+var velMag = 256;
+var vel = velMag;
+var anim = new Kinetic.Animation(function(frame) {
+	var stageWidth = stage.getWidth();
+	var absPos = circ.getAbsolutePosition();
+	if (absPos.x >= stageWidth) {
+		vel = -velMag;
+	} else if (absPos.x <= 0) {
+		vel = velMag;
+	}
+	var xDist = vel * (frame.timeDiff / 1000);
+	var yDist = 0;
+
+	circ.move({
+		x: xDist,
+		y: yDist
+	});
+}, layer);
+
+anim.start();
