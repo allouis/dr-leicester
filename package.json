@@ -4,7 +4,9 @@
   "description": "KineticJS experiment",
   "main": "",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "http-server",
+    "dev": "http-server & nodemon -w js --exec \"browserify -e js/main.js -o bundle.js\""
   },
   "repository": {
     "type": "git",
@@ -15,5 +17,9 @@
   "bugs": {
     "url": "https://github.com/allouis/dr-leicester/issues"
   },
-  "homepage": "https://github.com/allouis/dr-leicester"
+  "homepage": "https://github.com/allouis/dr-leicester",
+  "dependencies": {
+    "http-server": "^0.7.4",
+    "nodemon": "^1.2.1"
+  }
 }
