@@ -1,1 +1,1 @@
-console.log('hello world!');
+var Kinetic = require('kinetic');
