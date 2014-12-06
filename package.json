@@ -1,0 +1,19 @@
+{
+  "name": "dr-leicester",
+  "version": "0.0.0",
+  "description": "KineticJS experiment",
+  "main": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/allouis/dr-leicester.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/allouis/dr-leicester/issues"
+  },
+  "homepage": "https://github.com/allouis/dr-leicester"
+}
