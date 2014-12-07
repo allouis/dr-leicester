@@ -1,71 +1,25 @@
 var Kinetic = require('kinetic');
 var Events = require('minivents');
-var playerController = require('./lib/playerController.js');
+var backgroundView = require('./lib/backgroundView.js');
+var groundView = require('./lib/groundView.js');
+var playerView = require('./lib/playerView.js');
+var Layer = require('./lib/layer.js');
+
+var layer = Layer.layer;
+var stageView = require('./lib/stageView.js');
 
 var pubsub = new Events();
 
-var windowWidth = window.innerWidth; //this is used to determine player velocity
-window.addEventListener('resize', resizeStage, false);
-var stage = new Kinetic.Stage({
-	container: 'container',
-	width: windowWidth,
-	height: window.innerHeight 
-});
-var layer = new Kinetic.Layer();
+var stage = stageView.stage;
 
-var resizeStage = function() {
-	windowWidth = window.innerWidth;
-	stage.setWidth(windowWidth);
-	stage.setHeight(window.innerHeight);
-};
+var background = backgroundView.background;
+var ground = groundView.ground;
+var player = playerView.player;
 
-var background = new Kinetic.Rect({
-	x: 0,
-	y: 0,
-	width: stage.getWidth(),
-	height: stage.getHeight(),
-	fill: '#F0F',
-});
+console.log(ground);
+
 layer.add(background);
-var player = new Kinetic.Rect({
-    name: 'player',
-    x: 50,
-    y: 50,
-    width: 25,
-    height: 25,
-    fill: 'green',
-    draggable: true
-});
+layer.add(ground);
 layer.add(player);
 
 stage.add(layer);
-
-var velMag = windowWidth / 8;
-var xVel = 0;
-var yVel = 0;
-
-playerController.on('move', function (vector) {
-	if (vector.x !== undefined) {
-		xVel = vector.x;
-	}
-	if (vector.y !== undefined) {
-		yVel = vector.y;
-	}
-});
-
-var anim = new Kinetic.Animation(function(frame) {
-	var xDist;
-	var yDist;
-	var distRatio = frame.timeDiff * stage.getWidth() / 4096;
-
-	xDist = xVel * distRatio;
-	yDist = yVel * distRatio;
-
-	player.move({
-		x: xDist,
-		y: yDist
-	});
-}, layer);
-
-anim.start();
-
