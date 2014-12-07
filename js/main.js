@@ -1,7 +1,8 @@
 var Kinetic = require('kinetic');
-//var Events = require('minivents');
+var Events = require('minivents');
+var playerController = require('./lib/playerController.js');
 
-//var pubsub = new Events();
+var pubsub = new Events();
 
 var windowWidth = window.innerWidth; //this is used to determine player velocity
 window.addEventListener('resize', resizeStage, false);
@@ -11,7 +12,6 @@ var stage = new Kinetic.Stage({
 	height: window.innerHeight 
 });
 var layer = new Kinetic.Layer();
-
 
 var resizeStage = function() {
 	windowWidth = window.innerWidth;
@@ -27,16 +27,6 @@ var background = new Kinetic.Rect({
 	fill: '#F0F',
 });
 layer.add(background);
-var comp = new Kinetic.Rect({
-    name: 'comp',
-    x: 50,
-    y: 50,
-    width: 25,
-    height: 25,
-    fill: 'blue',
-    draggable: true
-});
-layer.add(comp);
 var player = new Kinetic.Rect({
     name: 'player',
     x: 50,
@@ -51,20 +41,25 @@ layer.add(player);
 stage.add(layer);
 
 var velMag = windowWidth / 8;
-var xVel;
-var yVel;
+var xVel = 0;
+var yVel = 0;
+
+playerController.on('move', function (vector) {
+	if (vector.x !== undefined) {
+		xVel = vector.x;
+	}
+	if (vector.y !== undefined) {
+		yVel = vector.y;
+	}
+});
+
 var anim = new Kinetic.Animation(function(frame) {
 	var xDist;
 	var yDist;
-	var stageWidth = stage.getWidth();
-	var absPos = player.getAbsolutePosition();
-	
-	if (xVel) {
-		xDist = xVel * (frame.timeDiff / 1000);
-	}
-	if (yVel) {
-		yDist = yVel * (frame.timeDiff / 1000);
-	}
+	var distRatio = frame.timeDiff * stage.getWidth() / 4096;
+
+	xDist = xVel * distRatio;
+	yDist = yVel * distRatio;
 
 	player.move({
 		x: xDist,
@@ -74,53 +69,3 @@ var anim = new Kinetic.Animation(function(frame) {
 
 anim.start();
 
-//controls
-(function () {
-	var keyCodes = [];
-
-	keyCodes[37] = keyCodes[65] = {
-		down: function() {
-			xVel = -velMag;
-		},
-		up: function() {
-			xVel = 0;
-		},
-	};
-	keyCodes[38] = keyCodes[87] = {
-		down: function() {
-			yVel = -velMag;
-		},
-		up: function() {
-			yVel = 0;
-		}
-	};
-	keyCodes[39] = keyCodes[68] = {
-		down: function() {
-			xVel = velMag;
-		},
-		up: function() {
-			xVel = 0;
-		}
-	}
-	keyCodes[40] = keyCodes[83] = {
-		down: function() {
-			yVel = velMag;
-		},
-		up: function() {
-			yVel = 0;
-		}
-	}
-
-	document.onkeydown = function(e) {
-		if (keyCodes[e.keyCode]) {
-			keyCodes[e.keyCode].down();
-		}
-	};
-	
-	document.onkeyup = function(e) {
-		if (keyCodes[e.keyCode]) {
-			keyCodes[e.keyCode].up();
-		}
-	}
-	
-}());
