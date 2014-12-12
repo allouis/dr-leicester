@@ -6,6 +6,8 @@ var Layer = require('./layer.js');
 var layer = Layer.layer;
 var stage = stageView.stage;
 
+
+
 var player = new Kinetic.Rect({
 	name: 'player',
 	x: 50,
@@ -16,20 +18,17 @@ var player = new Kinetic.Rect({
 	draggable: true
 });
 
-playerController.on('move', function (vector) {
-	if (vector.x !== undefined) {
-		xVel = vector.x;
-	}
-	if (vector.y !== undefined) {
-		yVel = vector.y;
-	}
+playerController.on('render', function (coords) {
+	var stageWidth = stage.width();
+	player.position({
+		x: coords.x,
+		y: coords.y
+	});
+	layer.draw();
 });
 
-
-var velMag = stage.getWidth() / 8;
-var xVel = 0;
-var yVel = 0;
-
+	
+//dev send time between frames to model to calc dist from vel
 var anim = new Kinetic.Animation(function(frame) {
 	var xDist;
 	var yDist;
@@ -37,14 +36,9 @@ var anim = new Kinetic.Animation(function(frame) {
 
 	xDist = xVel * distRatio;
 	yDist = yVel * distRatio;
-
-	player.move({
-		x: xDist,
-		y: yDist
-	});
 }, layer);
 
-anim.start();
+//anim.start();
 
 exports.player = player;
 

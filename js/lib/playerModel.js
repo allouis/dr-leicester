@@ -13,10 +13,10 @@ var yVel = 0;
 
 playerController.on('move', function (vector) {
 	if (vector.x !== undefined) {
-		xVel = vector.x;
+		xVel = vector.x * 8;
 	}
 	if (vector.y !== undefined) {
-		yVel = vector.y;
+		yVel = vector.y * 8;
 	}
 	player.x += xVel;
 	player.y += yVel;
