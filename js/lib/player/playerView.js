@@ -1,7 +1,7 @@
 var Kinetic = require('kinetic');
 var playerController = require('./playerController.js');
-var stageView = require('./stageView');
-var Layer = require('./layer.js');
+var stageView = require('../stageView');
+var Layer = require('../layer.js');
 
 var layer = Layer.layer;
 var stage = stageView.stage;

@@ -2,8 +2,8 @@ var backgroundView = require('./lib/backgroundView.js');
 var groundView = require('./lib/groundView.js');
 var Kinetic = require('kinetic');
 var Layer = require('./lib/layer.js');
-var playerModel = require('./lib/playerModel.js');
-var playerView = require('./lib/playerView.js');
+var playerModel = require('./lib/player/playerModel.js');
+var playerView = require('./lib/player/playerView.js');
 var stageView = require('./lib/stageView.js');
 
 var layer = Layer.layer;
