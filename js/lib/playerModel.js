@@ -8,18 +8,22 @@ var player = {
 	color: '#00F'
 };
 
-var xVel = 0;
-var yVel = 0;
+var speedMod = .5;
+var xVector = 0;
+var yVector = 0;
 
 playerController.on('move', function (vector) {
 	if (vector.x !== undefined) {
-		xVel = vector.x * 8;
+		xVector = vector.x;
 	}
 	if (vector.y !== undefined) {
-		yVel = vector.y * 8;
+		yVector = vector.y;
 	}
-	player.x += xVel;
-	player.y += yVel;
+});
+
+playerController.on('timeDiff', function(timeDiff) {
+	player.x += xVector * timeDiff * speedMod;
+	player.y += yVector * timeDiff * speedMod;
 	playerController.emit('render', player);
 });
 
