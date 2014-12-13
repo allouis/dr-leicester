@@ -13,7 +13,6 @@ var player = new Kinetic.Rect({
 	width: 25,
 	height: 25,
 	fill: '#00F',
-	draggable: true
 });
 
 playerController.on('render', function (coords) {
