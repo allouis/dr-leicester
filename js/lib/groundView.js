@@ -7,7 +7,7 @@ var stageHeight = stage.getHeight();
 
 var ground = new Kinetic.Rect({
 	x: 0,
-	y: stageHeight / 2,
+	y: 300,
 	width: stage.getWidth(),
 	height: stageHeight / 2,
 	fill: '#0F0',

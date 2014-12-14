@@ -10,7 +10,7 @@ var ground = {
 		y: 300
 	},
 	width: 900,
-	height: 600,
+	height: 500,
 	velocity: {
 		x: 0,
 		y: 0
