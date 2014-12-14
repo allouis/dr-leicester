@@ -20,12 +20,7 @@ playerController.on('render', function (coords) {
 		x: coords.x,
 		y: coords.y
 	});
+	layer.draw();
 });
-
-var anim = new Kinetic.Animation(function(frame) {
-	playerController.emit('timeDiff', frame.timeDiff);
-}, layer);
-
-anim.start();
 
 exports.player = player;

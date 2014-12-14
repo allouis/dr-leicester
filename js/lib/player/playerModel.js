@@ -1,14 +1,25 @@
 var playerController = require('./playerController.js');
 
 var player = {
-	x: 50,
-	y: 50,
+	position: {
+		x: 50,
+		y: 50
+	},
+	velocity: {
+		x: 0,
+		y: 0
+	},
+	acceleration: {
+		x: 0,
+		y: 0
+	},
+	restitution: 0.25,
 	width: 25,
 	height: 25,
 	color: '#00F'
 };
 
-var speedMod = .5;
+var accelerationMod = 512;
 var xVector = 0;
 var yVector = 0;
 
@@ -21,10 +32,14 @@ playerController.on('move', function (vector) {
 	}
 });
 
-playerController.on('timeDiff', function(timeDiff) {
-	player.x += xVector * timeDiff * speedMod;
-	player.y += yVector * timeDiff * speedMod;
-	playerController.emit('render', player);
+playerController.on('timeDiff', function() {
+	player.acceleration.x = xVector * accelerationMod;
+	player.acceleration.y = yVector * accelerationMod;
 });
+
+
+//development
+window.player = player
+
 
 exports.player = player;

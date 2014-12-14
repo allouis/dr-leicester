@@ -8,6 +8,7 @@ var stage = stageView.stage;
 
 var playerModel = require('./lib/player/playerModel.js');
 var playerView = require('./lib/player/playerView.js');
+var gameController = require('./lib/gameController.js');
 var player = playerView.player;
 layer.add(player);
 
