@@ -23,6 +23,7 @@
     "http-server": "^0.7.4",
     "kinetic": "^5.0.6",
     "minivents": "^1.1.7",
-    "nodemon": "^1.2.1"
+    "nodemon": "^1.2.1",
+    "tinytic": "^1.0.0"
   }
 }
