@@ -8,12 +8,12 @@ var map = {
 		pressed: false,
 		down: function() {
 			this.pressed = true;
-			minivents.emit('move', {y:-1});
+			minivents.emit('move', {y: -1});
 		},
 		up: function() {
 			this.pressed = false;
 			if (!map.down.pressed) {
-				minivents.emit('move', {y:0});
+				minivents.emit('move', {y: 0});
 			} else {
 				map.down.down();
 			}
@@ -23,12 +23,12 @@ var map = {
 		pressed: false,
 		down: function() {
 			this.pressed = true;
-			minivents.emit('move', {y:1});
+			minivents.emit('move', {y: 1});
 		},
 		up: function() {
 			this.pressed = false;
 			if (!map.up.pressed) {
-				minivents.emit('move', {y:0});
+				minivents.emit('move', {y: 0});
 			} else {
 				map.up.down();
 			}
@@ -38,12 +38,12 @@ var map = {
 		pressed: false,
 		down: function() {
 			this.pressed = true;
-			minivents.emit('move', {x:-1});
+			minivents.emit('move', {x: -1});
 		},
 		up: function() {
 			this.pressed = false;
 			if (!map.right.pressed) {
-				minivents.emit('move', {x:0});
+				minivents.emit('move', {x: 0});
 			} else {
 				map.right.down();
 			}
@@ -53,12 +53,12 @@ var map = {
 		pressed: false,
 		down: function() {
 			this.pressed = true;
-			minivents.emit('move', {x:1});
+			minivents.emit('move', {x: 1});
 		},
 		up: function() {
 			this.pressed = false;
 			if (!map.left.pressed) {
-				minivents.emit('move', {x:0});
+				minivents.emit('move', {x: 0});
 			} else {
 				map.left.down();
 			}
@@ -78,3 +78,4 @@ keyControls.on('keyUp', function(direction) {
 });
 
 exports.on = minivents.on;
+exports.emit = minivents.emit;
