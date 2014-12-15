@@ -8,7 +8,7 @@ var ground = {
 		y: stage.getHeight() * .5
 	},
 	width: stage.getWidth() / 2,
-	height: stage.getHeight() / 16,
+	height: stage.getHeight() / 8,
 	velocity: {
 		x: 0,
 		y: 0
