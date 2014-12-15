@@ -2,10 +2,10 @@ var PhysicsEngine = require('./PhysicsEngine.js');
 var tinytic = require('tinytic');
 var playerController = require('./player/playerController.js');
 var player = require('./player/playerModel.js').player;
-var GroundModel = require('./ground/groundModel.js');
+var ground = require('./ground/groundController.js').model;
 
 var physics = new PhysicsEngine();
-var ground = new GroundModel();
+
 
 Object.freeze(ground.position);
 physics.addObject(player);
