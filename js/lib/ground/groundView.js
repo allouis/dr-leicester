@@ -4,8 +4,8 @@ var stageView = require('../stageView');
 var stage = stageView.stage;
 
 var ground = new Kinetic.Rect({
-	x: 0,
-	y: stage.getHeight() * .5,
+	x: stage.getHeight() * .2,
+	y: stage.getHeight() * .4,
 	width: stage.getWidth() / 2,
 	height: stage.getHeight() / 8,
 	fill: '#0F0',
