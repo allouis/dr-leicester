@@ -1,14 +1,22 @@
-var Kinetic = require('kinetic');
 var stageView = require('../stageView');
 
 var stage = stageView.stage;
 
-var ground = new Kinetic.Rect({
-	x: 0,
-	y: stage.getHeight() * .5,
+var ground = {
+	position: {
+		x: 0,
+		y: stage.getHeight() * .5
+	},
 	width: stage.getWidth() / 2,
 	height: stage.getHeight() / 16,
-	fill: '#0F0',
-});
+	velocity: {
+		x: 0,
+		y: 0
+	},
+	acceleration: {
+		x: 0,
+		y: 0
+	}
+};
 
 exports.ground = ground;
