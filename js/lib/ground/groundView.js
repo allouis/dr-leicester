@@ -1,5 +1,5 @@
 var Kinetic = require('kinetic');
-var stageView = require('./stageView');
+var stageView = require('../stageView');
 
 var stage = stageView.stage;
 
