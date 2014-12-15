@@ -2,13 +2,13 @@ var stageView = require('../stageView');
 
 var stage = stageView.stage;
 
-var GroundModel = function() {
+var GroundModel = function(posX, posY, width, height) {
 	this.position = {
-		x: stage.getHeight() * .2,
-		y: stage.getHeight() * .4
+		x: posX,
+		y: posY
 	};
-	this.width = stage.getWidth() / 2;
-	this.height = stage.getHeight() / 8;
+	this.width = width;
+	this.height = height;
 	this.velocity = {
 		x: 0,
 		y: 0

@@ -1,9 +1,17 @@
 var GroundModel = require('./groundModel');
 var groundView = require('./groundView');
+var stageView = require('../stageView');
 
-var ground = new GroundModel();
+var stage = stageView.stage;
 
-console.log(ground);
+var model = new GroundModel(
+	stage.getHeight() * .2,
+	stage.getHeight() * .4,
+	stage.getWidth() / 2,
+	stage.getHeight() / 8
+);
 
-exports.model = ground;
+
+
+exports.model = model;
 exports.view = groundView.ground;
