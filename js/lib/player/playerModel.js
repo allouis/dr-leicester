@@ -1,13 +1,15 @@
 var playerController = require('./playerController.js');
+var stageView = require('../stageView');
+var stage = stageView.stage;
 
 var player = {
 	dimensions: {
-		x: 25,
-		y: 25
+		x: stage.getWidth() * .02,
+		y: stage.getWidth() * .02
 	},
 	position: {
 		x: 250,
-		y: 50
+		y: 250
 	},
 	velocity: {
 		x: 0,

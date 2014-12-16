@@ -10,8 +10,8 @@ var player = new Kinetic.Rect({
 	name: 'player',
 	x: 50,
 	y: 50,
-	width: 25,
-	height: 25,
+	width: stage.getWidth() * .02,
+	height: stage.getWidth() * .02,
 	fill: '#00F',
 });
 
