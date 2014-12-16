@@ -8,8 +8,8 @@ var player = {
 		y: stage.getWidth() * .02
 	},
 	position: {
-		x: 250,
-		y: 250
+		x: stage.getWidth() * .25,
+		y: stage.getHeight() * .25
 	},
 	velocity: {
 		x: 0,
