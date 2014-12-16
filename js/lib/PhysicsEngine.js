@@ -73,10 +73,28 @@ PhysicsEngine.prototype = {
 			bottomOverlap =  obj1.height - diffBetweenObjBottoms;
 		}
 		var yOverlap = topOverlap + bottomOverlap;
+
+		var leftOverlap = 0;
+		var rightOverlap = 0;
+		var diffBetweenObjLefts = obj2.position.x - obj1.position.x;
+		if (diffBetweenObjLefts > 0) {
+			leftOverlap = obj1.width - diffBetweenObjLefts;
+		}
+		var diffBetweenObjRights = obj1.position.x + obj1.width - (obj2.position.x + obj2.width);
+		if (diffBetweenObjRights > 0) {
+			rightOverlap =  obj1.width - diffBetweenObjRights;
+		}
+		var xOverlap = leftOverlap + rightOverlap;
+
 		var resolveCollisionX = function() {
 			var width = obj1.velocity.x >= 0 ? -obj1.width : obj2.width;
 			obj1.position.x = obj2.position.x + width;
 			obj1.velocity.x *= -obj1.restitution;
+		};
+		var resolveCollisionY = function() {
+			var height = obj1.velocity.y >= 0 ? -obj1.height : obj2.height;
+			obj1.position.y = obj2.position.y + height;
+			obj1.velocity.y *= -obj1.restitution;
 		};
 		if (obj1.position.y > obj2.position.y && obj1.position.y + obj1.height < obj2.position.y + obj2.height) {
 			//this is definitely a collision on the x-axis
@@ -85,16 +103,17 @@ PhysicsEngine.prototype = {
 		}
 		if (obj1.position.x > obj2.position.x && obj1.position.x + obj1.width < obj2.position.x + obj2.width) {
 			//this is definitely a collision on the y-axis
-			var height = obj1.velocity.y >= 0 ? -obj1.height : obj2.height;
-			obj1.position.y = obj2.position.y + height;
-			obj1.velocity.y *= -obj1.restitution;
+			resolveCollisionY();
 			return;
 		}
-		if (yOverlap > 0) {
+		if (yOverlap > xOverlap) {
 			resolveCollisionX();
+			return;
 		}
-			//this is probably a collision on the x-axis
-		//otherwise need to look at velocities for more info - bloody corners
+		if (xOverlap > yOverlap) {
+			resolveCollisionY();
+			return;
+		}
 	}
 };
 
