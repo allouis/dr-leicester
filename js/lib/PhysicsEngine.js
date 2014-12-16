@@ -24,7 +24,6 @@ PhysicsEngine.prototype = {
 			this.objects.slice(i + 1, this.objects.length).forEach(function(obj2) {
 				var collision = this.checkForCollision(obj1, obj2)
 				if (collision) {
-					console.log('we must have hit the ground');
 					this.resolveCollision(obj1, obj2);
 				}
 			}.bind(this));
@@ -63,11 +62,25 @@ PhysicsEngine.prototype = {
 	//obj1 is coliding with obj2 and not vice versa
 	//requires further development
 	resolveCollision: function(obj1, obj2, collision) {
-		if (obj1.position.y > obj2.position.y && obj1.position.y + obj1.height < obj2.position.y + obj2.height) {
-			//this is definitely a collision on the x-axis
+		var topOverlap = 0;
+		var bottomOverlap = 0;
+		var diffBetweenObjTops = obj2.position.y - obj1.position.y;
+		if (diffBetweenObjTops > 0) {
+			topOverlap = obj1.height - diffBetweenObjTops;
+		}
+		var diffBetweenObjBottoms = obj1.position.y + obj1.height - (obj2.position.y + obj2.height);
+		if (diffBetweenObjBottoms > 0) {
+			bottomOverlap =  obj1.height - diffBetweenObjBottoms;
+		}
+		var yOverlap = topOverlap + bottomOverlap;
+		var resolveCollisionX = function() {
 			var width = obj1.velocity.x >= 0 ? -obj1.width : obj2.width;
 			obj1.position.x = obj2.position.x + width;
 			obj1.velocity.x *= -obj1.restitution;
+		};
+		if (obj1.position.y > obj2.position.y && obj1.position.y + obj1.height < obj2.position.y + obj2.height) {
+			//this is definitely a collision on the x-axis
+			resolveCollisionX();
 			return;
 		}
 		if (obj1.position.x > obj2.position.x && obj1.position.x + obj1.width < obj2.position.x + obj2.width) {
@@ -77,6 +90,10 @@ PhysicsEngine.prototype = {
 			obj1.velocity.y *= -obj1.restitution;
 			return;
 		}
+		if (yOverlap > 0) {
+			resolveCollisionX();
+		}
+			//this is probably a collision on the x-axis
 		//otherwise need to look at velocities for more info - bloody corners
 	}
 };
