@@ -1,8 +1,12 @@
 var playerController = require('./playerController.js');
 
 var player = {
+	dimensions: {
+		x: 25,
+		y: 25
+	},
 	position: {
-		x: 50,
+		x: 250,
 		y: 50
 	},
 	velocity: {
@@ -14,8 +18,6 @@ var player = {
 		y: 0
 	},
 	restitution: 0.25,
-	width: 25,
-	height: 25,
 	color: '#00F'
 };
 
@@ -36,10 +38,5 @@ playerController.on('timeDiff', function() {
 	player.acceleration.x = xVector * accelerationMod;
 	player.acceleration.y = yVector * accelerationMod;
 });
-
-
-//development
-window.player = player
-
 
 exports.player = player;
