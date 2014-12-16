@@ -1,7 +1,3 @@
-var stageView = require('../stageView');
-
-var stage = stageView.stage;
-
 var GroundModel = function(posX, posY, width, height) {
 	this.position = {
 		x: posX,
