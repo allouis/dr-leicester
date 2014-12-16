@@ -1,18 +1,20 @@
-var GroundModel = function(posX, posY, width, height) {
-	this.position = {
-		x: posX,
-		y: posY
-	};
-	this.width = width;
-	this.height = height;
-	this.velocity = {
-		x: 0,
-		y: 0
-	};
-	this.acceleration = {
-		x: 0,
-		y: 0
+var groundModel = function(posX, posY, width, height) {
+	return {
+		position:{
+			x: posX,
+			y: posY
+		},
+		width: width,
+		height: height,
+		velocity: {
+			x: 0,
+			y: 0
+		},
+		acceleration: {
+			x: 0,
+			y: 0
+		}
 	};
 }
 
-module.exports = GroundModel;
+module.exports = groundModel;
