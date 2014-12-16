@@ -13,9 +13,6 @@ physics.addObject(ground);
 
 
 var draw = function() {
-	
-	//~ debugger;
-	console.log(ground.position);
 	playerController.emit('render', player.position);
 }
 
