@@ -8,8 +8,8 @@ var stage = stageView.stage;
 
 var player = new Kinetic.Rect({
 	name: 'player',
-	x: 50,
-	y: 50,
+	x: 0,
+	y: 0,
 	width: stage.getWidth() * .02,
 	height: stage.getWidth() * .02,
 	fill: '#00F',
