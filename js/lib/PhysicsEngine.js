@@ -1,6 +1,7 @@
 var PhysicsEngine = function() {
 	this.objects = [];
 	this.gravity = 128;
+	this.dragCoefficient = .0001;
 };
 PhysicsEngine.prototype = {
 	addObject: function(obj) {
@@ -12,9 +13,28 @@ PhysicsEngine.prototype = {
 	},
 	resolveForces: function(dt) {
 		this.objects.forEach(function(obj) {
+			//gravity
 			if (obj.mass !== Infinity) {
 				Math.min(obj.acceleration.y += this.gravity, this.gravity);
 			}
+
+			//air resistance
+			if (obj.velocity.x > 0) {
+				obj.acceleration.x -= Math.pow(obj.velocity.x, 2) *
+					this.dragCoefficient *obj.dimensions.y;
+			} else if (obj.velocity.x < 0) {
+				obj.acceleration.x += Math.pow(obj.velocity.x, 2) *
+					this.dragCoefficient * obj.dimensions.y;
+			}
+			if (obj.velocity.y > 0) {
+				obj.acceleration.y -= Math.pow(obj.velocity.y, 2) *
+					this.dragCoefficient * obj.dimensions.x;
+			} else if (obj.velocity.x < 0) {
+				obj.acceleration.y += Math.pow(obj.velocity.y, 2) *
+					this.dragCoefficient * obj.dimensions.x;
+			}
+
+			//compute velocity and position from environmental forces
 			obj.velocity.x += obj.acceleration.x * dt;
 			obj.velocity.y += obj.acceleration.y * dt;
 			obj.position.x += obj.velocity.x * dt;
