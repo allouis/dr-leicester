@@ -7,9 +7,9 @@ var ground = require('./ground/groundController.js').models;
 var physics = new PhysicsEngine();
 
 
-window.ground = ground[0];
 physics.addObject(player);
 physics.addObject(ground[0]);
+physics.addObject(ground[1]);
 
 
 var draw = function() {
