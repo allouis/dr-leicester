@@ -3,25 +3,52 @@ var groundView = require('./groundView');
 var stageView = require('../stageView');
 var stage = stageView.stage;
 
-//initial parameters
-var groundPosX = stage.getHeight() * .2;
-var groundPosY = stage.getHeight() * .4;
-var groundWidth = stage.getWidth() / 2;
-var groundHeight = stage.getHeight() / 8;
+var stageWidth = stage.getWidth();
+var stageHeight = stage.getHeight();
 
-var model = groundModel(
-	groundPosX,
-	groundPosY,
-	groundWidth,
-	groundHeight
-);
+var i;
 
-var view = groundView(
-	groundPosX,
-	groundPosY,
-	groundWidth,
-	groundHeight
-);
+var params = [];
+var models = [];
+var views = [];
 
-exports.model = model;
-exports.view = view;
+params[0] = {
+	dimensions: {
+		x: stageWidth * .5,
+		y: stageHeight * .125
+	},
+	position: {
+		x: stageWidth * .2,
+		y: stageHeight * .4
+	},
+	color: '#0F0'
+};
+params[1] = {
+	dimensions: {
+		x: stageWidth * .1,
+		y: stageHeight * .3
+	},
+	position: {
+		x: stageWidth * .4,
+		y: stageHeight * .1
+	},
+	color: '#FF0'
+};
+params[2] = {
+	dimensions: {
+		x: stageWidth * .05,
+		y: stageHeight * .1
+	},
+	position: {
+		x: stageWidth * .1,
+		y: stageHeight * .1
+	},
+	color: '#F00'
+};
+for (i = 0; i < params.length; i++) {
+	models[i] = groundModel(params[i]);
+	views[i] = groundView(params[i]);
+}
+
+exports.models = models;
+exports.views = views;

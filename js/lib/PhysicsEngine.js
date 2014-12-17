@@ -12,7 +12,9 @@ PhysicsEngine.prototype = {
 	},
 	resolveForces: function(dt) {
 		this.objects.forEach(function(obj) {
-			Math.min(obj.acceleration.y += this.gravity, this.gravity);
+			if (obj.mass !== Infinity) {
+				Math.min(obj.acceleration.y += this.gravity, this.gravity);
+			}
 			obj.velocity.x += obj.acceleration.x * dt;
 			obj.velocity.y += obj.acceleration.y * dt;
 			obj.position.x += obj.velocity.x * dt;
@@ -31,6 +33,9 @@ PhysicsEngine.prototype = {
 	},
 	checkForCollision: function(obj1, obj2) {
 		if (obj1 === obj2) {
+			return false;
+		}
+		if (obj1.mass === Infinity) {
 			return false;
 		}
 		var collision = {

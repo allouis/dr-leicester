@@ -1,12 +1,13 @@
-var groundModel = function(posX, posY, width, height) {
+var groundModel = function(params) {
 	return {
+		mass: Infinity,
 		dimensions: {
-			x: width,
-			y: height
+			x: params.dimensions.x,
+			y: params.dimensions.y
 		},
 		position: {
-			x: posX,
-			y: posY
+			x: params.position.x,
+			y: params.position.y
 		},
 		velocity: {
 			x: 0,

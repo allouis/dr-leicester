@@ -2,14 +2,16 @@ var PhysicsEngine = require('./PhysicsEngine.js');
 var tinytic = require('tinytic');
 var playerController = require('./player/playerController.js');
 var player = require('./player/playerModel.js').player;
-var ground = require('./ground/groundController.js').model;
+var groundModels = require('./ground/groundController.js').models;
 
+var i;
 var physics = new PhysicsEngine();
 
 
-Object.freeze(ground.position);
 physics.addObject(player);
-physics.addObject(ground);
+for (i = 0; i < groundModels.length; i++) {
+	physics.addObject(groundModels[i]);
+}
 
 
 var draw = function() {
