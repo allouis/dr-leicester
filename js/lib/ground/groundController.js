@@ -4,24 +4,39 @@ var stageView = require('../stageView');
 var stage = stageView.stage;
 
 //initial parameters
-var groundPosX = stage.getHeight() * .2;
-var groundPosY = stage.getHeight() * .4;
-var groundWidth = stage.getWidth() / 2;
-var groundHeight = stage.getHeight() / 8;
+var params = {
+	dimensions: {
+		x: stage.getWidth() / 2,
+		y: stage.getHeight() / 8
+	},
+	position: {
+		x: stage.getWidth() * .2,
+		y: stage.getHeight() * .4
+	},
+};
 
-var model = groundModel(
-	groundPosX,
-	groundPosY,
-	groundWidth,
-	groundHeight
-);
+var models = [];
+var views = [];
 
-var view = groundView(
-	groundPosX,
-	groundPosY,
-	groundWidth,
-	groundHeight
-);
+models[0] = groundModel(params);
+views[0] = groundView(params);
 
-exports.model = model;
-exports.view = view;
+
+
+
+var params = {
+	dimensions: {
+		x: stage.getWidth() * .1,
+		y: stage.getHeight() * .3
+	},
+	position: {
+		x: stage.getWidth() * .4,
+		y: stage.getHeight() * .1
+	},
+};
+
+models[1] = groundModel(params);
+views[1] = groundView(params);
+
+exports.models = models;
+exports.views = views;

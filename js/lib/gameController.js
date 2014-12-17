@@ -2,7 +2,7 @@ var PhysicsEngine = require('./PhysicsEngine.js');
 var tinytic = require('tinytic');
 var playerController = require('./player/playerController.js');
 var player = require('./player/playerModel.js').player;
-var ground = require('./ground/groundController.js').model;
+var ground = require('./ground/groundController.js').models[0];
 
 var physics = new PhysicsEngine();
 

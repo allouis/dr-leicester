@@ -1,11 +1,11 @@
 var Kinetic = require('kinetic');
 
-var groundView = function(posX, posY, width, height) {
+var groundView = function(params) {
 	var ground = new Kinetic.Rect({
-		x: posX,
-		y: posY,
-		width: width,
-		height: height,
+		x: params.position.x,
+		y: params.position.y,
+		width: params.dimensions.x,
+		height: params.dimensions.y,
 		fill: '#0F0',
 	});
 	return ground;
