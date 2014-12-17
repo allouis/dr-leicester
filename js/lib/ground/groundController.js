@@ -24,7 +24,7 @@ views[0] = groundView(params);
 
 
 
-var params = {
+params = {
 	dimensions: {
 		x: stage.getWidth() * .1,
 		y: stage.getHeight() * .3
