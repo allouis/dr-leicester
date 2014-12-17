@@ -1,5 +1,6 @@
 var groundModel = function(params) {
 	return {
+		mass: Infinity,
 		dimensions: {
 			x: params.dimensions.x,
 			y: params.dimensions.y

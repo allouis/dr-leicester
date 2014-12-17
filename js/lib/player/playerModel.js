@@ -3,6 +3,7 @@ var stageView = require('../stageView');
 var stage = stageView.stage;
 
 var player = {
+	mass: 1,
 	dimensions: {
 		x: stage.getWidth() * .02,
 		y: stage.getWidth() * .02
