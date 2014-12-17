@@ -21,6 +21,7 @@ params[0] = {
 		x: stageWidth * .2,
 		y: stageHeight * .4
 	},
+	color: '#0F0'
 };
 params[1] = {
 	dimensions: {
@@ -31,6 +32,7 @@ params[1] = {
 		x: stageWidth * .4,
 		y: stageHeight * .1
 	},
+	color: '#FF0'
 };
 params[2] = {
 	dimensions: {
@@ -41,6 +43,7 @@ params[2] = {
 		x: stageWidth * .1,
 		y: stageHeight * .1
 	},
+	color: '#F00'
 };
 for (i = 0; i < params.length; i++) {
 	models[i] = groundModel(params[i]);

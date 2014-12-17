@@ -6,7 +6,7 @@ var groundView = function(params) {
 		y: params.position.y,
 		width: params.dimensions.x,
 		height: params.dimensions.y,
-		fill: '#0F0',
+		fill: params.color,
 	});
 	return ground;
 };
