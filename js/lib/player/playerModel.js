@@ -1,9 +1,15 @@
 var playerController = require('./playerController.js');
+var stageView = require('../stageView');
+var stage = stageView.stage;
 
 var player = {
+	dimensions: {
+		x: stage.getWidth() * .02,
+		y: stage.getWidth() * .02
+	},
 	position: {
-		x: 50,
-		y: 50
+		x: stage.getWidth() * .25,
+		y: stage.getHeight() * .25
 	},
 	velocity: {
 		x: 0,
@@ -14,8 +20,6 @@ var player = {
 		y: 0
 	},
 	restitution: 0.25,
-	width: 25,
-	height: 25,
 	color: '#00F'
 };
 
@@ -36,10 +40,5 @@ playerController.on('timeDiff', function() {
 	player.acceleration.x = xVector * accelerationMod;
 	player.acceleration.y = yVector * accelerationMod;
 });
-
-
-//development
-window.player = player
-
 
 exports.player = player;
