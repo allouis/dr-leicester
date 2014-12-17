@@ -32,7 +32,16 @@ params[1] = {
 		y: stageHeight * .1
 	},
 };
-
+params[2] = {
+	dimensions: {
+		x: stageWidth * .05,
+		y: stageHeight * .1
+	},
+	position: {
+		x: stageWidth * .1,
+		y: stageHeight * .1
+	},
+};
 for (i = 0; i < params.length; i++) {
 	models[i] = groundModel(params[i]);
 	views[i] = groundView(params[i]);
