@@ -63,6 +63,12 @@ var map = {
 				map.left.down();
 			}
 		}
+	},
+	space: {
+		down: function() {
+			minivents.emit('jump');
+		},
+		up: function() {}
 	}
 };
 

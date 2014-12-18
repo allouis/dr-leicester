@@ -121,16 +121,21 @@ PhysicsEngine.prototype = {
 			obj1.position.y = obj2.position.y + height;
 			obj1.velocity.y *= -obj1.restitution;
 		};
+		if (obj1.position.x > obj2.position.x && obj1.position.x + obj1.dimensions.x < obj2.position.x + obj2.dimensions.x) {
+			//this is definitely a collision on the y-axis
+			//hack to allow jumping
+			obj1.touchingGround = true;
+			resolveCollisionY();
+			return;
+		} else {
+			obj1.touchingGround = false;
+		}
 		if (obj1.position.y > obj2.position.y && obj1.position.y + obj1.dimensions.y < obj2.position.y + obj2.dimensions.y) {
 			//this is definitely a collision on the x-axis
 			resolveCollisionX();
 			return;
 		}
-		if (obj1.position.x > obj2.position.x && obj1.position.x + obj1.dimensions.x < obj2.position.x + obj2.dimensions.x) {
-			//this is definitely a collision on the y-axis
-			resolveCollisionY();
-			return;
-		}
+
 		if (yOverlap > xOverlap) {
 			resolveCollisionX();
 			return;

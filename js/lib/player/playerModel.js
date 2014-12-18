@@ -20,6 +20,7 @@ var player = {
 		x: 0,
 		y: 0
 	},
+	touchingGround: false,
 	restitution: 0.25,
 	color: '#00F'
 };
@@ -34,6 +35,12 @@ playerController.on('move', function (vector) {
 	}
 	if (vector.y !== undefined) {
 		yVector = vector.y;
+	}
+});
+playerController.on('jump', function () {
+	if (player.touchingGround) {
+		player.velocity.y = -accelerationMod / 2;
+		player.touchingGround = false;
 	}
 });
 
