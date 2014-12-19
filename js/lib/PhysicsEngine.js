@@ -13,6 +13,8 @@ PhysicsEngine.prototype = {
 	},
 	resolveForces: function(dt) {
 		this.objects.forEach(function(obj) {
+			//hacky jump
+			obj.touchingGround = false;
 			//gravity
 			if (obj.mass !== Infinity) {
 				Math.min(obj.acceleration.y += this.gravity, this.gravity);
@@ -124,11 +126,12 @@ PhysicsEngine.prototype = {
 		if (obj1.position.x > obj2.position.x && obj1.position.x + obj1.dimensions.x < obj2.position.x + obj2.dimensions.x) {
 			//this is definitely a collision on the y-axis
 			//hack to allow jumping
-			obj1.touchingGround = true;
+			if (obj1.position.y + obj1.dimensions.y > obj2.position.y) {
+				//should be touching the bottom
+				obj1.touchingGround = true;
+			}
 			resolveCollisionY();
 			return;
-		} else {
-			obj1.touchingGround = false;
 		}
 		if (obj1.position.y > obj2.position.y && obj1.position.y + obj1.dimensions.y < obj2.position.y + obj2.dimensions.y) {
 			//this is definitely a collision on the x-axis
