@@ -2,6 +2,10 @@ var playerController = require('./playerController.js');
 var stageView = require('../stageView');
 var stage = stageView.stage;
 
+var accelerationMod = 512;
+var xVector = 0;
+var yVector = 0;
+
 var player = {
 	mass: 1,
 	dimensions: {
@@ -22,12 +26,18 @@ var player = {
 	},
 	touchingGround: false,
 	restitution: 0.25,
-	color: '#00F'
+	color: '#00F',
+	move: function() {
+		this.acceleration.x = xVector * accelerationMod;
+		this.acceleration.y = yVector * accelerationMod;
+	},
+	jump: function() {
+		if (this.touchingGround) {
+			this.velocity.y = -accelerationMod / 2;
+			this.touchingGround = false;
+		}
+	}
 };
-
-var accelerationMod = 512;
-var xVector = 0;
-var yVector = 0;
 
 playerController.on('move', function (vector) {
 	if (vector.x !== undefined) {
@@ -37,16 +47,12 @@ playerController.on('move', function (vector) {
 		yVector = vector.y;
 	}
 });
-playerController.on('jump', function () {
-	if (player.touchingGround) {
-		player.velocity.y = -accelerationMod / 2;
-		player.touchingGround = false;
-	}
+playerController.on('jump', function() {
+	player.jump();
 });
 
 playerController.on('timeDiff', function() {
-	player.acceleration.x = xVector * accelerationMod;
-	player.acceleration.y = yVector * accelerationMod;
+	player.move();
 });
 
 exports.player = player;
