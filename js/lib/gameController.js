@@ -14,7 +14,7 @@ for (i = 0; i < groundModels.length; i++) {
 
 var draw = function() {
 	playerController.emit('render', player.position);
-}
+};
 
 var loop = function loop() {
 	window.requestAnimationFrame(loop);

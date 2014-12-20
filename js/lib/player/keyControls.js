@@ -55,6 +55,6 @@ document.onkeyup = function(e) {
 	if (keyCodes[e.keyCode]) {
 		keyCodes[e.keyCode].up();
 	}
-}
+};
 
 exports.on = minivents.on;

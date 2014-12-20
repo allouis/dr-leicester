@@ -48,7 +48,7 @@ PhysicsEngine.prototype = {
 	resolveCollisions: function() {
 		this.objects.forEach(function(obj1, i) {
 			this.objects.slice(i + 1, this.objects.length).forEach(function(obj2) {
-				var collision = this.checkForCollision(obj1, obj2)
+				var collision = this.checkForCollision(obj1, obj2);
 				if (collision) {
 					this.resolveCollision(obj1, obj2);
 				}
@@ -84,8 +84,7 @@ PhysicsEngine.prototype = {
 				collision.y = true;
 			}
 		}
-
-		return collision.x && collision.y
+		return collision.x && collision.y;
 	},
 	//this is not a generalised solution as it assumes that
 	//obj1 is coliding with obj2 and not vice versa
@@ -154,4 +153,4 @@ PhysicsEngine.prototype = {
 	}
 };
 
-module.exports = PhysicsEngine
+module.exports = PhysicsEngine;
