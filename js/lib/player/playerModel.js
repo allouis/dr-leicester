@@ -39,7 +39,7 @@ var player = {
 		this.acceleration.y = yVector * accelerationMod;
 	},
 	jump: function() {
-		if (this.touchingGround) {
+		if (this.touching.bottom) {
 			this.velocity.y = -accelerationMod / 2;
 			this.touchingGround = false;
 		}
