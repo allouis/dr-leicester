@@ -16,7 +16,7 @@ PhysicsEngine.prototype = {
 			//hacky jump
 			obj.touchingGround = false;
 			//gravity
-			if (obj.mass !== Infinity) {
+			if (obj.mass) {
 				Math.min(obj.acceleration.y += this.gravity, this.gravity);
 			}
 
@@ -57,7 +57,7 @@ PhysicsEngine.prototype = {
 		if (obj1 === obj2) {
 			return false;
 		}
-		if (obj1.mass === Infinity) {
+		if (!obj1.mass) {
 			return false;
 		}
 		var collision = {
