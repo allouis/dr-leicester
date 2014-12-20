@@ -127,7 +127,7 @@ PhysicsEngine.prototype = {
 		if (obj1.position.x > obj2.position.x && obj1.position.x + obj1.dimensions.x < obj2.position.x + obj2.dimensions.x) {
 			//this is definitely a collision on the y-axis
 			//hack to allow jumping
-			if (obj1.position.y + obj1.dimensions.y < obj2.position.y) {
+			if (obj1.position.y + obj1.dimensions.y >= obj2.position.y) {
 				//should be touching the bottom
 				if (obj1.touching) {
 					obj1.touching.bottom = true;

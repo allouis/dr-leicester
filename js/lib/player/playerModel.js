@@ -41,7 +41,7 @@ var player = {
 	jump: function() {
 		if (this.touching.bottom) {
 			this.velocity.y = -accelerationMod / 2;
-			this.touchingGround = false;
+			this.touching.bottom = false;
 		}
 	}
 };
