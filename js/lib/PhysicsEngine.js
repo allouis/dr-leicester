@@ -13,8 +13,12 @@ PhysicsEngine.prototype = {
 	},
 	resolveForces: function(dt) {
 		this.objects.forEach(function(obj) {
+			//hacky jump
+			if (obj.touching) {
+				obj.touching.bottom = false;
+			}
 			//gravity
-			if (obj.mass !== Infinity) {
+			if (obj.mass) {
 				Math.min(obj.acceleration.y += this.gravity, this.gravity);
 			}
 
@@ -44,7 +48,7 @@ PhysicsEngine.prototype = {
 	resolveCollisions: function() {
 		this.objects.forEach(function(obj1, i) {
 			this.objects.slice(i + 1, this.objects.length).forEach(function(obj2) {
-				var collision = this.checkForCollision(obj1, obj2)
+				var collision = this.checkForCollision(obj1, obj2);
 				if (collision) {
 					this.resolveCollision(obj1, obj2);
 				}
@@ -55,7 +59,7 @@ PhysicsEngine.prototype = {
 		if (obj1 === obj2) {
 			return false;
 		}
-		if (obj1.mass === Infinity) {
+		if (!obj1.mass) {
 			return false;
 		}
 		var collision = {
@@ -80,8 +84,7 @@ PhysicsEngine.prototype = {
 				collision.y = true;
 			}
 		}
-
-		return collision.x && collision.y
+		return collision.x && collision.y;
 	},
 	//this is not a generalised solution as it assumes that
 	//obj1 is coliding with obj2 and not vice versa
@@ -121,16 +124,24 @@ PhysicsEngine.prototype = {
 			obj1.position.y = obj2.position.y + height;
 			obj1.velocity.y *= -obj1.restitution;
 		};
+		if (obj1.position.x > obj2.position.x && obj1.position.x + obj1.dimensions.x < obj2.position.x + obj2.dimensions.x) {
+			//this is definitely a collision on the y-axis
+			//hack to allow jumping
+			if (obj1.position.y + obj1.dimensions.y >= obj2.position.y) {
+				//should be touching the bottom
+				if (obj1.touching) {
+					obj1.touching.bottom = true;
+				}
+			}
+			resolveCollisionY();
+			return;
+		}
 		if (obj1.position.y > obj2.position.y && obj1.position.y + obj1.dimensions.y < obj2.position.y + obj2.dimensions.y) {
 			//this is definitely a collision on the x-axis
 			resolveCollisionX();
 			return;
 		}
-		if (obj1.position.x > obj2.position.x && obj1.position.x + obj1.dimensions.x < obj2.position.x + obj2.dimensions.x) {
-			//this is definitely a collision on the y-axis
-			resolveCollisionY();
-			return;
-		}
+
 		if (yOverlap > xOverlap) {
 			resolveCollisionX();
 			return;
@@ -142,4 +153,4 @@ PhysicsEngine.prototype = {
 	}
 };
 
-module.exports = PhysicsEngine
+module.exports = PhysicsEngine;

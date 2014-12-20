@@ -27,7 +27,7 @@ keyCodes[39] = keyCodes[68] = {
 	up: function() {
 		minivents.emit('keyUp', 'right');
 	}
-}
+};
 keyCodes[40] = keyCodes[83] = {
 	down: function() {
 		minivents.emit('keyDown', 'down');
@@ -35,7 +35,15 @@ keyCodes[40] = keyCodes[83] = {
 	up: function() {
 		minivents.emit('keyUp', 'down');
 	}
-}
+};
+keyCodes[32] = {
+	down: function() {
+		minivents.emit('keyDown', 'space');
+	},
+	up: function() {
+		minivents.emit('keyUp', 'space');
+	}
+};
 
 document.onkeydown = function(e) {
 	if (keyCodes[e.keyCode]) {
@@ -47,6 +55,6 @@ document.onkeyup = function(e) {
 	if (keyCodes[e.keyCode]) {
 		keyCodes[e.keyCode].up();
 	}
-}
+};
 
 exports.on = minivents.on;

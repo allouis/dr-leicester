@@ -1,6 +1,6 @@
 var groundModel = function(params) {
 	return {
-		mass: Infinity,
+		mass: 0,
 		dimensions: {
 			x: params.dimensions.x,
 			y: params.dimensions.y
@@ -18,6 +18,6 @@ var groundModel = function(params) {
 			y: 0
 		}
 	};
-}
+};
 
 module.exports = groundModel;
