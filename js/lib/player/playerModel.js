@@ -40,7 +40,7 @@ var player = {
 	},
 	jump: function() {
 		if (this.touching.bottom) {
-			this.velocity.y = -accelerationMod / 2;
+			this.velocity.y = -accelerationMod;
 			this.touching.bottom = false;
 		}
 	}

@@ -1,6 +1,6 @@
 var PhysicsEngine = function() {
 	this.objects = [];
-	this.gravity = 128;
+	this.gravity = 1024;
 	this.dragCoefficient = .0001;
 };
 PhysicsEngine.prototype = {
@@ -25,7 +25,7 @@ PhysicsEngine.prototype = {
 			//air resistance
 			if (obj.velocity.x > 0) {
 				obj.acceleration.x -= Math.pow(obj.velocity.x, 2) *
-					this.dragCoefficient *obj.dimensions.y;
+					this.dragCoefficient * obj.dimensions.y;
 			} else if (obj.velocity.x < 0) {
 				obj.acceleration.x += Math.pow(obj.velocity.x, 2) *
 					this.dragCoefficient * obj.dimensions.y;
