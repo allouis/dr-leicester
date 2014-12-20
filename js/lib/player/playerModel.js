@@ -7,6 +7,7 @@ var xVector = 0;
 var yVector = 0;
 
 var player = {
+	//below: physics engine data
 	mass: 1,
 	dimensions: {
 		x: stage.getWidth() * .02,
@@ -24,8 +25,14 @@ var player = {
 		x: 0,
 		y: 0
 	},
-	touchingGround: false,
+	touching: {
+		top: false,
+		right: false,
+		bottom: false,
+		left: false
+	},
 	restitution: 0.25,
+	//above: physics engine data
 	color: '#00F',
 	move: function() {
 		this.acceleration.x = xVector * accelerationMod;
