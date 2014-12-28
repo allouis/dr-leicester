@@ -1,64 +1,60 @@
 var PhysicsEngine = function() {
 	this.objects = [];
 	this.gravity = 1024;
-	this.dragCoefficient = .0001;
+	this.dragCoefficient = 1 / 16384;
 };
 PhysicsEngine.prototype = {
 	addObject: function(obj) {
 		this.objects.push(obj);
 	},
 	compute: function(dt) {
-		this.resolveForces(dt / 1024);
-		this.resolveCollisions();
-	},
-	resolveForces: function(dt) {
-		this.objects.forEach(function(obj) {
-			//hacky jump
-			if (obj.touching) {
-				obj.touching.bottom = false;
-			}
-			//gravity
-			if (obj.mass) {
-				Math.min(obj.acceleration.y += this.gravity, this.gravity);
-			}
-
-			//air resistance
-			if (obj.velocity.x > 0) {
-				obj.acceleration.x -= Math.pow(obj.velocity.x, 2) *
-					this.dragCoefficient * obj.dimensions.y;
-			} else if (obj.velocity.x < 0) {
-				obj.acceleration.x += Math.pow(obj.velocity.x, 2) *
-					this.dragCoefficient * obj.dimensions.y;
-			}
-			if (obj.velocity.y > 0) {
-				obj.acceleration.y -= Math.pow(obj.velocity.y, 2) *
-					this.dragCoefficient * obj.dimensions.x;
-			} else if (obj.velocity.x < 0) {
-				obj.acceleration.y += Math.pow(obj.velocity.y, 2) *
-					this.dragCoefficient * obj.dimensions.x;
-			}
-
-			//compute velocity and position from environmental forces
-			obj.velocity.x += obj.acceleration.x * dt;
-			obj.velocity.y += obj.acceleration.y * dt;
-			obj.position.x += obj.velocity.x * dt;
-			obj.position.y += obj.velocity.y * dt;
+		this.objects.forEach(function(obj, i) {
+			this.resolveForces(obj, dt / 1024);
+			this.resolveCollisions(obj, i);
 		}.bind(this));
+		
 	},
-	resolveCollisions: function() {
-		this.objects.forEach(function(obj1, i) {
-			this.objects.slice(i + 1, this.objects.length).forEach(function(obj2) {
-				var collision = this.checkForCollision(obj1, obj2);
-				if (collision) {
-					this.resolveCollision(obj1, obj2);
-				}
-			}.bind(this));
+	resolveForces: function(obj, dt) {
+		//hacky jump
+		if (obj.touching) {
+			obj.touching.bottom = false;
+		}
+		//gravity
+		if (obj.mass) {
+			Math.min(obj.acceleration.y += this.gravity, this.gravity);
+		}
+
+		//air resistance
+		if (obj.velocity.x > 0) {
+			obj.acceleration.x -= Math.pow(obj.velocity.x, 2) *
+				this.dragCoefficient * obj.dimensions.y;
+		} else if (obj.velocity.x < 0) {
+			obj.acceleration.x += Math.pow(obj.velocity.x, 2) *
+				this.dragCoefficient * obj.dimensions.y;
+		}
+		if (obj.velocity.y > 0) {
+			obj.acceleration.y -= Math.pow(obj.velocity.y, 2) *
+				this.dragCoefficient * obj.dimensions.x;
+		} else if (obj.velocity.x < 0) {
+			obj.acceleration.y += Math.pow(obj.velocity.y, 2) *
+				this.dragCoefficient * obj.dimensions.x;
+		}
+
+		//compute velocity and position from environmental forces
+		obj.velocity.x += obj.acceleration.x * dt;
+		obj.velocity.y += obj.acceleration.y * dt;
+		obj.position.x += obj.velocity.x * dt;
+		obj.position.y += obj.velocity.y * dt;
+	},
+	resolveCollisions: function(obj1, i) {
+		this.objects.slice(i + 1, this.objects.length).forEach(function(obj2) {
+			var collision = this.checkForCollision(obj1, obj2);
+			if (collision) {
+				this.resolveCollision(obj1, obj2);
+			}
 		}.bind(this));
 	},
 	checkForCollision: function(obj1, obj2) {
-		if (obj1 === obj2) {
-			return false;
-		}
 		if (!obj1.mass) {
 			return false;
 		}
