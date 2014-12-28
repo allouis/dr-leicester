@@ -79,11 +79,11 @@ PhysicsEngine.prototype = {
 		}
 
 		if (yOverlap > xOverlap) {
-			resolveCollision('x');
+			resolveCollision('y');
 			return;
 		}
 		if (xOverlap > yOverlap) {
-			resolveCollision('y');
+			resolveCollision('x');
 			return;
 		}
 	},
