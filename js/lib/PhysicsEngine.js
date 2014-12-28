@@ -9,8 +9,13 @@ PhysicsEngine.prototype = {
 	},
 	compute: function(dt) {
 		this.objects.forEach(function(obj, i) {
-			this.collisionDetection(obj, i);
-			this.resolveForces(obj);
+			if (obj.velocity === undefined) {
+				return;
+			}
+			if (obj.mass) {
+				this.collisionDetection(obj, i);
+				this.resolveForces(obj);
+			}
 			this.computeVelAndPos(obj, dt / 1024);
 		}.bind(this));
 	},
@@ -22,9 +27,6 @@ PhysicsEngine.prototype = {
 			obj1.touching.bottom = false;
 		}
 		this.objects.slice(i + 1, this.objects.length).forEach(function(obj2) {
-			if (!obj1.mass) {
-				return;
-			}
 			var checkForCollisionOnAxis = this.checkForCollision.bind(this, obj1, obj2);
 			if (checkForCollisionOnAxis('x') && checkForCollisionOnAxis('y')) {
 				this.resolveCollision(obj1, obj2);
@@ -87,10 +89,7 @@ PhysicsEngine.prototype = {
 	},
 	resolveForces: function(obj) {
 		//gravity
-		if (obj.mass) {
-			Math.min(obj.acceleration.y += this.gravity, this.gravity);
-		}
-
+		Math.min(obj.acceleration.y += this.gravity, this.gravity);
 		//air resistance
 		if (obj.velocity.x > 0) {
 			obj.acceleration.x -= Math.pow(obj.velocity.x, 2) *
@@ -112,6 +111,9 @@ PhysicsEngine.prototype = {
 		obj.velocity.y += obj.acceleration.y * dt;
 		obj.position.x += obj.velocity.x * dt;
 		obj.position.y += obj.velocity.y * dt;
+		//reset acceleration
+		obj.acceleration.x = 0;
+		obj.acceleration.y = 0;
 	}
 };
 
