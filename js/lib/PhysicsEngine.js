@@ -9,45 +9,36 @@ PhysicsEngine.prototype = {
 	},
 	compute: function(dt) {
 		this.objects.forEach(function(obj, i) {
+			this.collisionDetection(obj, i);
 			this.resolveForces(obj);
 			this.computeVelAndPos(obj, dt / 1024);
-			this.collisionDetection(obj, i);
 		}.bind(this));
 	},
 	collisionDetection: function(obj1, i) {
+		if (obj1.touching) {
+			obj1.touching.left = false;
+			obj1.touching.right = false;
+			obj1.touching.top = false;
+			obj1.touching.bottom = false;
+		}
 		this.objects.slice(i + 1, this.objects.length).forEach(function(obj2) {
-			if (this.checkForCollision(obj1, obj2)) {
+			if (!obj1.mass) {
+				return;
+			}
+			var checkForCollisionOnAxis = this.checkForCollision.bind(this, obj1, obj2);
+			if (checkForCollisionOnAxis('x') && checkForCollisionOnAxis('y')) {
 				this.resolveCollision(obj1, obj2);
 			}
 		}.bind(this));
 	},
-	checkForCollision: function(obj1, obj2) {
-		if (!obj1.mass) {
+	checkForCollision: function(obj1, obj2, axis) {
+		if (obj1.position[axis] + obj1.dimensions[axis] < obj2.position[axis]) {
 			return false;
 		}
-		var collision = {
-			x: false,
-			y: false
-		};
-		if (obj1.position.x + obj1.dimensions.x < obj2.position.x) {
+		if (obj1.position[axis] > obj2.position[axis] + obj2.dimensions[axis]) {
 			return false;
-		} else {
-			if (obj1.position.x > obj2.position.x + obj2.dimensions.x) {
-				return false;
-			} else {
-				collision.x = true;
-			}
 		}
-		if (obj1.position.y + obj1.dimensions.y < obj2.position.y) {
-			return false;
-		} else {
-			if (obj1.position.y > obj2.position.y + obj2.dimensions.y) {
-				return false;
-			} else {
-				collision.y = true;
-			}
-		}
-		return collision.x && collision.y;
+		return true;
 	},
 	//this is not a generalised solution as it assumes that
 	//obj1 is coliding with obj2 and not vice versa
@@ -65,7 +56,9 @@ PhysicsEngine.prototype = {
 			obj1.position[axis] = obj2.position[axis] + dimension;
 			obj1.velocity[axis] *= -obj1.restitution;
 		};
-		if (obj1.position.x > obj2.position.x && obj1.position.x + obj1.dimensions.x < obj2.position.x + obj2.dimensions.x) {
+
+		if (obj1.position.x > obj2.position.x &&
+			obj1.position.x + obj1.dimensions.x < obj2.position.x + obj2.dimensions.x) {
 			//this is definitely a collision on the y-axis
 			//hack to allow jumping
 			if (obj1.position.y + obj1.dimensions.y >= obj2.position.y) {
@@ -93,10 +86,6 @@ PhysicsEngine.prototype = {
 		}
 	},
 	resolveForces: function(obj) {
-		//hacky jump
-		if (obj.touching) {
-			obj.touching.bottom = false;
-		}
 		//gravity
 		if (obj.mass) {
 			Math.min(obj.acceleration.y += this.gravity, this.gravity);
