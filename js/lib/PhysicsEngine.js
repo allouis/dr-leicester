@@ -21,10 +21,9 @@ PhysicsEngine.prototype = {
 	},
 	collisionDetection: function(obj1, i, objects) {
 		if (obj1.touching) {
-			obj1.touching.left = false;
-			obj1.touching.right = false;
-			obj1.touching.top = false;
-			obj1.touching.bottom = false;
+			obj1.touching.forEach(function (element) {
+				element = false;
+			});
 		}
 		objects.slice(i + 1, objects.length).forEach(function(obj2) {
 			var checkForCollisionOnAxis = this.checkForCollision.bind(this, obj1, obj2);
@@ -44,7 +43,9 @@ PhysicsEngine.prototype = {
 	},
 	_computeOverlap: function (obj1, obj2, axis) {
 		if (obj1.position[axis] > obj2.position[axis]) {
-			return 0;
+			//does not return 0 because this would count as touching
+			//this method determines there is no touching
+			return -Number.MIN_VALUE;
 		}
 		return obj1.position[axis] + obj1.dimensions[axis] - obj2.position[axis];
 	},
@@ -58,7 +59,7 @@ PhysicsEngine.prototype = {
 		obj1.velocity[axis] *= -obj1.restitution;
 	},
 	resolveCollision: function(obj1, obj2, collision) {
-		//key: as per css [top, right, bottom, left]
+		//[top, right, bottom, left]
 		var overlap = [
 			this._computeOverlap(obj2, obj1, 'y'),
 			this._computeOverlap(obj1, obj2, 'x'),
@@ -66,25 +67,17 @@ PhysicsEngine.prototype = {
 			this._computeOverlap(obj2, obj1, 'x')
 		];
 
+		if (obj1.touching) {
+			obj1.touching = obj1.touching.map(function (element, index) {
+				return overlap[index] >= 0;
+			});
+		}
+
 		if (this._noCollisionOnAxis(obj1, obj2, 'x')) {
-			if (obj1.touching) {
-				if (overlap[2] >= 0) {
-					obj1.touching.bottom = true;
-				} else if (overlap[0] >= 0) {
-					obj1.touching.top = true;
-				}
-			}
 			this._resolveCollisionHelper(obj1, obj2, 'y');
 			return;
 		}
 		if (this._noCollisionOnAxis(obj1, obj2, 'y')) {
-			if (obj1.touching) {
-				if (overlap[3] >= 0) {
-					obj1.touching.bottom = true;
-				} else if (overlap[1] >= 0) {
-					obj1.touching.top = true;
-				}
-			}
 			this._resolveCollisionHelper(obj1, obj2, 'x');
 			return;
 		}

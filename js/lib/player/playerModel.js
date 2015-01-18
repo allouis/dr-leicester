@@ -25,12 +25,13 @@ var player = {
 		x: 0,
 		y: 0
 	},
-	touching: {
-		top: false,
-		right: false,
-		bottom: false,
-		left: false
-	},
+	//[top, right, bottom, left]
+	touching: [
+		false,
+		false,
+		false,
+		false
+	],
 	restitution: 0.25,
 	//above: physics engine data
 	color: '#00F',
@@ -39,9 +40,9 @@ var player = {
 		this.acceleration.y = yVector * accelerationMod;
 	},
 	jump: function() {
-		if (this.touching.bottom) {
+		if (this.touching[2]) {
 			this.velocity.y = 4 * accelerationMod;
-			this.touching.bottom = false;
+			this.touching[2] = false;
 		}
 	}
 };
