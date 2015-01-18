@@ -21,8 +21,8 @@ PhysicsEngine.prototype = {
 	},
 	collisionDetection: function(obj1, i, objects) {
 		if (obj1.touching) {
-			obj1.touching.forEach(function (element) {
-				element = false;
+			obj1.touching = obj1.touching.map(function () {
+				return false;
 			});
 		}
 		objects.slice(i + 1, objects.length).forEach(function(obj2) {
