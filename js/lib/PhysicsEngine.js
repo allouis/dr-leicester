@@ -8,30 +8,30 @@ PhysicsEngine.prototype = {
 		this.objects.push(obj);
 	},
 	compute: function(dt) {
-		this.objects.forEach(function(obj, i) {
+		this.objects.forEach(function(obj, i, objects) {
 			if (obj.velocity === undefined) {
 				return;
 			}
 			if (obj.mass) {
-				this.collisionDetection(obj, i);
+				this.collisionDetection(obj, i, objects);
 				this.resolveForces(obj);
 			}
 			this.computeVelAndPos(obj, dt / 1024);
-		}.bind(this));
+		}, this);
 	},
-	collisionDetection: function(obj1, i) {
+	collisionDetection: function(obj1, i, objects) {
 		if (obj1.touching) {
 			obj1.touching.left = false;
 			obj1.touching.right = false;
 			obj1.touching.top = false;
 			obj1.touching.bottom = false;
 		}
-		this.objects.slice(i + 1, this.objects.length).forEach(function(obj2) {
+		objects.slice(i + 1, objects.length).forEach(function(obj2) {
 			var checkForCollisionOnAxis = this.checkForCollision.bind(this, obj1, obj2);
 			if (checkForCollisionOnAxis('x') && checkForCollisionOnAxis('y')) {
 				this.resolveCollision(obj1, obj2);
 			}
-		}.bind(this));
+		}, this);
 	},
 	checkForCollision: function(obj1, obj2, axis) {
 		if (obj1.position[axis] + obj1.dimensions[axis] < obj2.position[axis]) {
@@ -42,48 +42,62 @@ PhysicsEngine.prototype = {
 		}
 		return true;
 	},
-	//this is not a generalised solution as it assumes that
-	//obj1 is coliding with obj2 and not vice versa
-	//requires further development
+	_computeOverlap: function (obj1, obj2, axis) {
+		if (obj1.position[axis] > obj2.position[axis]) {
+			return 0;
+		}
+		return obj1.position[axis] + obj1.dimensions[axis] - obj2.position[axis];
+	},
+	_noCollisionOnAxis: function (obj1, obj2, axis) {
+		return obj1.position[axis] > obj2.position[axis] &&
+		obj1.position[axis] + obj1.dimensions[axis] < obj2.position[axis] + obj2.dimensions[axis];
+	},
+	_resolveCollisionHelper: function (obj1, obj2, axis) {
+		var dimension = obj1.velocity[axis] >= 0 ? -obj1.dimensions[axis] : obj2.dimensions[axis];
+		obj1.position[axis] = obj2.position[axis] + dimension;
+		obj1.velocity[axis] *= -obj1.restitution;
+	},
 	resolveCollision: function(obj1, obj2, collision) {
-		var topOverlap = obj1.position.y + obj1.dimensions.y - obj2.position.y;
-		var bottomOverlap = obj2.position.y + obj2.dimensions.y - obj1.position.y;
-		var yOverlap = topOverlap + bottomOverlap;
-		var leftOverlap = obj1.position.x + obj1.dimensions.x - obj2.position.x;
-		var rightOverlap = obj2.position.x + obj2.dimensions.x - obj1.position.x;
-		var xOverlap = leftOverlap + rightOverlap;
+		//key: as per css [top, right, bottom, left]
+		var overlap = [
+			this._computeOverlap(obj2, obj1, 'y'),
+			this._computeOverlap(obj1, obj2, 'x'),
+			this._computeOverlap(obj1, obj2, 'y'),
+			this._computeOverlap(obj2, obj1, 'x')
+		];
 
-		var resolveCollision = function(axis) {
-			var dimension = obj1.velocity[axis] >= 0 ? -obj1.dimensions[axis] : obj2.dimensions[axis];
-			obj1.position[axis] = obj2.position[axis] + dimension;
-			obj1.velocity[axis] *= -obj1.restitution;
-		};
-
-		if (obj1.position.x > obj2.position.x &&
-			obj1.position.x + obj1.dimensions.x < obj2.position.x + obj2.dimensions.x) {
-			//this is definitely a collision on the y-axis
-			//hack to allow jumping
-			if (obj1.position.y + obj1.dimensions.y >= obj2.position.y) {
-				//should be touching the bottom
-				if (obj1.touching) {
+		if (this._noCollisionOnAxis(obj1, obj2, 'x')) {
+			if (obj1.touching) {
+				if (overlap[2] >= 0) {
 					obj1.touching.bottom = true;
+				} else if (overlap[0] >= 0) {
+					obj1.touching.top = true;
 				}
 			}
-			resolveCollision('y');
+			this._resolveCollisionHelper(obj1, obj2, 'y');
 			return;
 		}
-		if (obj1.position.y > obj2.position.y && obj1.position.y + obj1.dimensions.y < obj2.position.y + obj2.dimensions.y) {
-			//this is definitely a collision on the x-axis
-			resolveCollision('x');
+		if (this._noCollisionOnAxis(obj1, obj2, 'y')) {
+			if (obj1.touching) {
+				if (overlap[3] >= 0) {
+					obj1.touching.bottom = true;
+				} else if (overlap[1] >= 0) {
+					obj1.touching.top = true;
+				}
+			}
+			this._resolveCollisionHelper(obj1, obj2, 'x');
 			return;
 		}
 
+		var yOverlap = overlap[0] + overlap[2];
+		var xOverlap = overlap[1] + overlap[3];
+
 		if (yOverlap > xOverlap) {
-			resolveCollision('y');
+			this._resolveCollisionHelper(obj1, obj2, 'y');
 			return;
 		}
 		if (xOverlap > yOverlap) {
-			resolveCollision('x');
+			this._resolveCollisionHelper(obj1, obj2, 'x');
 			return;
 		}
 	},
