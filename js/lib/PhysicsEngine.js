@@ -112,14 +112,16 @@ PhysicsEngine.prototype = {
 				this.dragCoefficient * obj.dimensions.x;
 		}
 		//friction
-		//only on bottom of object currently
+		//only on x-axis, need to work out component of force
+		//along x-axis to calculate friction on the y-axis
 		if (obj.touching) {
-			if (obj.touching[2]) {
+			if (obj.touching[0] || obj.touching[2]) {
 				if (obj.velocity.x > 0) {
 					obj.acceleration.x -= this.frictionCoefficient * obj.mass * 1024;
 				} else if (obj.velocity.x < 0) {
 					obj.acceleration.x += this.frictionCoefficient * obj.mass * 1024;
 				}
+				return;
 			}
 		}
 	},
