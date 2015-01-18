@@ -2,7 +2,7 @@ var PhysicsEngine = function() {
 	this.objects = [];
 	this.gravity = 1024;
 	this.dragCoefficient = 1 / 16384;
-	this.frictionCoefficient = 1 / 4096;
+	this.frictionCoefficient = 1 / 4;
 };
 PhysicsEngine.prototype = {
 	addObject: function(obj) {
@@ -116,11 +116,9 @@ PhysicsEngine.prototype = {
 		if (obj.touching) {
 			if (obj.touching[2]) {
 				if (obj.velocity.x > 0) {
-					obj.acceleration.x -= Math.pow(obj.velocity.x, 2) *
-					this.frictionCoefficient * obj.dimensions.x;
+					obj.acceleration.x -= this.frictionCoefficient * obj.mass * 1024;
 				} else if (obj.velocity.x < 0) {
-					obj.acceleration.x += Math.pow(obj.velocity.x, 2) *
-					this.frictionCoefficient * obj.dimensions.x;
+					obj.acceleration.x += this.frictionCoefficient * obj.mass * 1024;
 				}
 			}
 		}
