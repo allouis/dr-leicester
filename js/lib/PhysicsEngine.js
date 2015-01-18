@@ -2,6 +2,7 @@ var PhysicsEngine = function() {
 	this.objects = [];
 	this.gravity = 1024;
 	this.dragCoefficient = 1 / 16384;
+	this.frictionCoefficient = 1 / 4096;
 };
 PhysicsEngine.prototype = {
 	addObject: function(obj) {
@@ -44,7 +45,6 @@ PhysicsEngine.prototype = {
 	_computeOverlap: function (obj1, obj2, axis) {
 		if (obj1.position[axis] > obj2.position[axis]) {
 			//does not return 0 because this would count as touching
-			//this method determines there is no touching
 			return -Number.MIN_VALUE;
 		}
 		return obj1.position[axis] + obj1.dimensions[axis] - obj2.position[axis];
@@ -72,7 +72,6 @@ PhysicsEngine.prototype = {
 				return overlap[index] >= 0;
 			});
 		}
-
 		if (this._noCollisionOnAxis(obj1, obj2, 'x')) {
 			this._resolveCollisionHelper(obj1, obj2, 'y');
 			return;
@@ -97,7 +96,7 @@ PhysicsEngine.prototype = {
 	resolveForces: function(obj) {
 		//gravity
 		Math.min(obj.acceleration.y += this.gravity, this.gravity);
-		//air resistance
+		//drag
 		if (obj.velocity.x > 0) {
 			obj.acceleration.x -= Math.pow(obj.velocity.x, 2) *
 				this.dragCoefficient * obj.dimensions.y;
@@ -111,6 +110,19 @@ PhysicsEngine.prototype = {
 		} else if (obj.velocity.x < 0) {
 			obj.acceleration.y += Math.pow(obj.velocity.y, 2) *
 				this.dragCoefficient * obj.dimensions.x;
+		}
+		//friction
+		//only on bottom of object currently
+		if (obj.touching) {
+			if (obj.touching[2]) {
+				if (obj.velocity.x > 0) {
+					obj.acceleration.x -= Math.pow(obj.velocity.x, 2) *
+					this.frictionCoefficient * obj.dimensions.x;
+				} else if (obj.velocity.x < 0) {
+					obj.acceleration.x += Math.pow(obj.velocity.x, 2) *
+					this.frictionCoefficient * obj.dimensions.x;
+				}
+			}
 		}
 	},
 	computeVelAndPos: function(obj, dt) {
