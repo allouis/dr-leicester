@@ -5,8 +5,9 @@
   "main": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "browserify -e js/main.js -o bundle.js",
     "start": "http-server",
-    "dev": "http-server & nodemon -w js --exec \"jshint js && browserify -e js/main.js -o bundle.js\""
+    "dev": "npm run start & nodemon -w js --exec \"npm run build\""
   },
   "repository": {
     "type": "git",

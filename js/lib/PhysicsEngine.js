@@ -1,155 +1,138 @@
 var PhysicsEngine = function() {
 	this.objects = [];
-	this.gravity = 128;
-	this.dragCoefficient = .0001;
+	this.gravity = 1024;
+	this.dragCoefficient = 1 / 16384;
+	this.frictionCoefficient = 1 / 4;
 };
 PhysicsEngine.prototype = {
 	addObject: function(obj) {
 		this.objects.push(obj);
 	},
 	compute: function(dt) {
-		this.resolveForces(dt / 1024);
-		this.resolveCollisions();
-	},
-	resolveForces: function(dt) {
-		this.objects.forEach(function(obj) {
-			//hacky jump
-			if (obj.touching) {
-				obj.touching.bottom = false;
+		this.objects.forEach(function(obj, i, objects) {
+			if (obj.velocity === undefined) {
+				return;
 			}
-			//gravity
 			if (obj.mass) {
-				Math.min(obj.acceleration.y += this.gravity, this.gravity);
+				this.collisionDetection(obj, i, objects);
+				this.resolveForces(obj);
 			}
-
-			//air resistance
-			if (obj.velocity.x > 0) {
-				obj.acceleration.x -= Math.pow(obj.velocity.x, 2) *
-					this.dragCoefficient *obj.dimensions.y;
-			} else if (obj.velocity.x < 0) {
-				obj.acceleration.x += Math.pow(obj.velocity.x, 2) *
-					this.dragCoefficient * obj.dimensions.y;
-			}
-			if (obj.velocity.y > 0) {
-				obj.acceleration.y -= Math.pow(obj.velocity.y, 2) *
-					this.dragCoefficient * obj.dimensions.x;
-			} else if (obj.velocity.x < 0) {
-				obj.acceleration.y += Math.pow(obj.velocity.y, 2) *
-					this.dragCoefficient * obj.dimensions.x;
-			}
-
-			//compute velocity and position from environmental forces
-			obj.velocity.x += obj.acceleration.x * dt;
-			obj.velocity.y += obj.acceleration.y * dt;
-			obj.position.x += obj.velocity.x * dt;
-			obj.position.y += obj.velocity.y * dt;
-		}.bind(this));
+			this.computeVelAndPos(obj, dt / 1024);
+		}, this);
 	},
-	resolveCollisions: function() {
-		this.objects.forEach(function(obj1, i) {
-			this.objects.slice(i + 1, this.objects.length).forEach(function(obj2) {
-				var collision = this.checkForCollision(obj1, obj2);
-				if (collision) {
-					this.resolveCollision(obj1, obj2);
-				}
-			}.bind(this));
-		}.bind(this));
-	},
-	checkForCollision: function(obj1, obj2) {
-		if (obj1 === obj2) {
-			return false;
-		}
-		if (!obj1.mass) {
-			return false;
-		}
-		var collision = {
-			x: false,
-			y: false
-		};
-		if (obj1.position.x + obj1.dimensions.x < obj2.position.x) {
-			return false;
-		} else {
-			if (obj1.position.x > obj2.position.x + obj2.dimensions.x) {
+	collisionDetection: function(obj1, i, objects) {
+		if (obj1.touching) {
+			obj1.touching = obj1.touching.map(function () {
 				return false;
-			} else {
-				collision.x = true;
-			}
+			});
 		}
-		if (obj1.position.y + obj1.dimensions.y < obj2.position.y) {
-			return false;
-		} else {
-			if (obj1.position.y > obj2.position.y + obj2.dimensions.y) {
-				return false;
-			} else {
-				collision.y = true;
+		objects.slice(i + 1, objects.length).forEach(function(obj2) {
+			var checkForCollisionOnAxis = this.checkForCollision.bind(this, obj1, obj2);
+			if (checkForCollisionOnAxis('x') && checkForCollisionOnAxis('y')) {
+				this.resolveCollision(obj1, obj2);
 			}
-		}
-		return collision.x && collision.y;
+		}, this);
 	},
-	//this is not a generalised solution as it assumes that
-	//obj1 is coliding with obj2 and not vice versa
-	//requires further development
+	checkForCollision: function(obj1, obj2, axis) {
+		if (obj1.position[axis] + obj1.dimensions[axis] < obj2.position[axis]) {
+			return false;
+		}
+		if (obj1.position[axis] > obj2.position[axis] + obj2.dimensions[axis]) {
+			return false;
+		}
+		return true;
+	},
+	_computeOverlap: function (obj1, obj2, axis) {
+		if (obj1.position[axis] > obj2.position[axis]) {
+			//does not return 0 because this would count as touching
+			return -Number.MIN_VALUE;
+		}
+		return obj1.position[axis] + obj1.dimensions[axis] - obj2.position[axis];
+	},
+	_noCollisionOnAxis: function (obj1, obj2, axis) {
+		return obj1.position[axis] > obj2.position[axis] &&
+		obj1.position[axis] + obj1.dimensions[axis] < obj2.position[axis] + obj2.dimensions[axis];
+	},
+	_resolveCollisionHelper: function (obj1, obj2, axis) {
+		var dimension = obj1.velocity[axis] >= 0 ? -obj1.dimensions[axis] : obj2.dimensions[axis];
+		obj1.position[axis] = obj2.position[axis] + dimension;
+		obj1.velocity[axis] *= -obj1.restitution;
+	},
 	resolveCollision: function(obj1, obj2, collision) {
-		var topOverlap = 0;
-		var bottomOverlap = 0;
-		var diffBetweenObjTops = obj2.position.y - obj1.position.y;
-		if (diffBetweenObjTops > 0) {
-			topOverlap = obj1.dimensions.y - diffBetweenObjTops;
-		}
-		var diffBetweenObjBottoms = obj1.position.y + obj1.dimensions.y - (obj2.position.y + obj2.dimensions.y);
-		if (diffBetweenObjBottoms > 0) {
-			bottomOverlap =  obj1.dimensions.y - diffBetweenObjBottoms;
-		}
-		var yOverlap = topOverlap + bottomOverlap;
+		//[top, right, bottom, left]
+		var overlap = [
+			this._computeOverlap(obj2, obj1, 'y'),
+			this._computeOverlap(obj1, obj2, 'x'),
+			this._computeOverlap(obj1, obj2, 'y'),
+			this._computeOverlap(obj2, obj1, 'x')
+		];
 
-		var leftOverlap = 0;
-		var rightOverlap = 0;
-		var diffBetweenObjLefts = obj2.position.x - obj1.position.x;
-		if (diffBetweenObjLefts > 0) {
-			leftOverlap = obj1.dimensions.x - diffBetweenObjLefts;
+		if (obj1.touching) {
+			obj1.touching = obj1.touching.map(function (element, index) {
+				return overlap[index] >= 0;
+			});
 		}
-		var diffBetweenObjRights = obj1.position.x + obj1.dimensions.x - (obj2.position.x + obj2.dimensions.x);
-		if (diffBetweenObjRights > 0) {
-			rightOverlap =  obj1.dimensions.x - diffBetweenObjRights;
+		if (this._noCollisionOnAxis(obj1, obj2, 'x')) {
+			this._resolveCollisionHelper(obj1, obj2, 'y');
+			return;
 		}
-		var xOverlap = leftOverlap + rightOverlap;
+		if (this._noCollisionOnAxis(obj1, obj2, 'y')) {
+			this._resolveCollisionHelper(obj1, obj2, 'x');
+			return;
+		}
 
-		var resolveCollisionX = function() {
-			var width = obj1.velocity.x >= 0 ? -obj1.dimensions.x : obj2.dimensions.x;
-			obj1.position.x = obj2.position.x + width;
-			obj1.velocity.x *= -obj1.restitution;
-		};
-		var resolveCollisionY = function() {
-			var height = obj1.velocity.y >= 0 ? -obj1.dimensions.y : obj2.dimensions.y;
-			obj1.position.y = obj2.position.y + height;
-			obj1.velocity.y *= -obj1.restitution;
-		};
-		if (obj1.position.x > obj2.position.x && obj1.position.x + obj1.dimensions.x < obj2.position.x + obj2.dimensions.x) {
-			//this is definitely a collision on the y-axis
-			//hack to allow jumping
-			if (obj1.position.y + obj1.dimensions.y >= obj2.position.y) {
-				//should be touching the bottom
-				if (obj1.touching) {
-					obj1.touching.bottom = true;
+		var yOverlap = overlap[0] + overlap[2];
+		var xOverlap = overlap[1] + overlap[3];
+
+		if (yOverlap < xOverlap) {
+			this._resolveCollisionHelper(obj1, obj2, 'y');
+			return;
+		}
+		if (xOverlap < yOverlap) {
+			this._resolveCollisionHelper(obj1, obj2, 'x');
+			return;
+		}
+	},
+	resolveForces: function(obj) {
+		//gravity
+		Math.min(obj.acceleration.y += this.gravity, this.gravity);
+		//drag
+		if (obj.velocity.x > 0) {
+			obj.acceleration.x -= Math.pow(obj.velocity.x, 2) *
+				this.dragCoefficient * obj.dimensions.y;
+		} else if (obj.velocity.x < 0) {
+			obj.acceleration.x += Math.pow(obj.velocity.x, 2) *
+				this.dragCoefficient * obj.dimensions.y;
+		}
+		if (obj.velocity.y > 0) {
+			obj.acceleration.y -= Math.pow(obj.velocity.y, 2) *
+				this.dragCoefficient * obj.dimensions.x;
+		} else if (obj.velocity.x < 0) {
+			obj.acceleration.y += Math.pow(obj.velocity.y, 2) *
+				this.dragCoefficient * obj.dimensions.x;
+		}
+		//friction
+		//only on x-axis, need to work out component of force
+		//along x-axis to calculate friction on the y-axis
+		if (obj.touching) {
+			if (obj.touching[0] || obj.touching[2]) {
+				if (obj.velocity.x > 0) {
+					obj.acceleration.x -= this.frictionCoefficient * obj.mass * 1024;
+				} else if (obj.velocity.x < 0) {
+					obj.acceleration.x += this.frictionCoefficient * obj.mass * 1024;
 				}
+				return;
 			}
-			resolveCollisionY();
-			return;
 		}
-		if (obj1.position.y > obj2.position.y && obj1.position.y + obj1.dimensions.y < obj2.position.y + obj2.dimensions.y) {
-			//this is definitely a collision on the x-axis
-			resolveCollisionX();
-			return;
-		}
-
-		if (yOverlap > xOverlap) {
-			resolveCollisionX();
-			return;
-		}
-		if (xOverlap > yOverlap) {
-			resolveCollisionY();
-			return;
-		}
+	},
+	computeVelAndPos: function(obj, dt) {
+		obj.velocity.x += obj.acceleration.x * dt;
+		obj.velocity.y += obj.acceleration.y * dt;
+		obj.position.x += obj.velocity.x * dt;
+		obj.position.y += obj.velocity.y * dt;
+		//reset acceleration
+		obj.acceleration.x = 0;
+		obj.acceleration.y = 0;
 	}
 };
 
