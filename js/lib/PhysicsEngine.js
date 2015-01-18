@@ -85,11 +85,11 @@ PhysicsEngine.prototype = {
 		var yOverlap = overlap[0] + overlap[2];
 		var xOverlap = overlap[1] + overlap[3];
 
-		if (yOverlap > xOverlap) {
+		if (yOverlap < xOverlap) {
 			this._resolveCollisionHelper(obj1, obj2, 'y');
 			return;
 		}
-		if (xOverlap > yOverlap) {
+		if (xOverlap < yOverlap) {
 			this._resolveCollisionHelper(obj1, obj2, 'x');
 			return;
 		}
